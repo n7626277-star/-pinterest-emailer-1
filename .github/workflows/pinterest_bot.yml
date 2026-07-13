@@ -1,0 +1,36 @@
+name: Check Pinterest board and email new pins
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *' # ירוץ פעם בשעה
+
+jobs:
+  check-and-send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run script
+        env:
+          RSS_URL: ${{ secrets.RSS_URL }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
+        run: python send_new_pins.py
+
+      - name: Save updated "seen pins" list back to the repo
+        run: |
+          git config user.name "pinterest-bot"
+          git config user.email "bot@github.com"
+          git add seen_pins.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update seen pins" && git push)
