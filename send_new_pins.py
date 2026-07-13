@@ -22,7 +22,12 @@ def _clean(value):
     return value.strip().strip('"').strip("'").strip()
 
 
-RSS_URL = _clean(os.environ["RSS_URL"])
+def _extract_url(value):
+    match = re.search(r"https://\S+", value)
+    return match.group(0) if match else value
+
+
+RSS_URL = _extract_url(_clean(os.environ["RSS_URL"]))
 FROM_EMAIL = _clean(os.environ["FROM_EMAIL"])
 APP_PASSWORD = _clean(os.environ["APP_PASSWORD"])
 TO_EMAIL = _clean(os.environ["TO_EMAIL"])
