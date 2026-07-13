@@ -18,10 +18,19 @@ from pathlib import Path
 import feedparser
 import requests
 
-RSS_URL = os.environ["RSS_URL"]
-FROM_EMAIL = os.environ["FROM_EMAIL"]
-APP_PASSWORD = os.environ["APP_PASSWORD"]
-TO_EMAIL = os.environ["TO_EMAIL"]
+def _clean(value):
+    return value.strip().strip('"').strip("'").strip()
+
+
+RSS_URL = _clean(os.environ["RSS_URL"])
+FROM_EMAIL = _clean(os.environ["FROM_EMAIL"])
+APP_PASSWORD = _clean(os.environ["APP_PASSWORD"])
+TO_EMAIL = _clean(os.environ["TO_EMAIL"])
+
+print(f"RSS_URL length: {len(RSS_URL)}, starts with https: {RSS_URL.startswith('https://')}")
+print(f"FROM_EMAIL length: {len(FROM_EMAIL)}")
+print(f"APP_PASSWORD length: {len(APP_PASSWORD)}")
+print(f"TO_EMAIL length: {len(TO_EMAIL)}")
 
 STATE_FILE = Path("seen_pins.json")
 
